@@ -2,10 +2,7 @@
     {
         "guid": "a3f5c9d2-7b14-4e8a-9c6f-2d8b1e0a4f73",
         "name": "Quality Overlay",
-        "description": "Draws clean video quality (4K, 1080p, 720p, 480p, SD) and audio codec
-  (DTS-HD MA 7.1, TrueHD Atmos, DD+ 5.1, AAC 5.1, FLAC, ...) badges onto
-  poster, thumbnail, and backdrop images in memory without modifying the
-  original files. Fully configurable from the admin dashboard.\n",
+        "description": "Draws clean video quality 4K, 1080p, 720p, 480p, SD and audio codec.\n",
         "overview": "A Jellyfin plugin that overlays clean video quality and audio codec badges onto poster, thumbnail, and backdrop images..",
         "owner": "obxidion",
         "category": "Metadata",
