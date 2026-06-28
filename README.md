@@ -54,14 +54,44 @@ jprm plugin build .
 
 ## Install via the Jellyfin plugin repository (GitHub)
 
-Users can install and auto-update the plugin from a repository URL:
+Once you have published a release on GitHub (see "Publishing releases" below),
+users can install and auto-update the plugin from a repository URL:
 
 1. In Jellyfin go to **Dashboard → Plugins → Repositories → Add**.
-2. Set the URL to your hosted manifest:
-   `https://raw.githubusercontent.com/obxidion/Jellyfin-Quality-Overlay/main/manifest.json`.
+2. Set the URL to the hosted manifest:
+   `https://raw.githubusercontent.com/obxidion/Jellyfin-Quality-Overlay/main/manifest.json`
 3. Open **Dashboard → Plugins → Catalog**, install **Quality Overlay**, and
    restart Jellyfin when prompted.
 
+## Publishing releases (maintainers)
+
+Releases are fully automated by `.github/workflows/release.yml`. On every tag
+that starts with `v`, the workflow builds the plugin, attaches a versioned zip to
+a GitHub Release, and updates `manifest.json` on the default branch so the
+repository URL above always points at the latest build.
+
+One-time setup:
+
+1. Create a GitHub repository from this folder and push it.
+2. Set `owner` in `build.yaml` to your GitHub username or org.
+
+Cut a release:
+
+```bash
+git tag v1.0.0.0
+git push origin v1.0.0.0
+```
+
+Use a four-part version (`MAJOR.MINOR.PATCH.BUILD`) that matches `version` in
+`build.yaml`. The workflow handles packaging, the GitHub Release, the checksum,
+and the manifest update. No manual editing of `manifest.json` is required — it
+ships as an empty list and is populated automatically with each release.
+
+### Manual repository hosting (optional)
+
+If you prefer not to use GitHub Actions, you can build a versioned zip locally
+with `jprm plugin build .`, host it anywhere, and maintain `manifest.json` by
+hand using `jprm repo add --url <release-base-url> ./ <plugin-zip>`.
 
 ## Requirements
 
