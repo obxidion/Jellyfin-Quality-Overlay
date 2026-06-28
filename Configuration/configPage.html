@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Quality Overlay</title>
+</head>
+<body>
+<div id="QualityOverlayConfigPage" data-role="page" class="page type-interior pluginConfigurationPage"
+     data-controller="__plugin/QualityOverlayConfigPage.js">
+    <div data-role="content">
+        <div class="content-primary">
+            <form id="QualityOverlayConfigForm">
+                <div class="verticalSection">
+                    <h2 class="sectionTitle">Quality Overlay</h2>
+                    <p class="fieldDescription">Overlay video quality and audio codec badges onto images in memory. Original files are never modified.</p>
+                </div>
+
+                <div class="verticalSection">
+                    <h3 class="checkboxListLabel">Badges</h3>
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox" type="checkbox" id="EnableVideoQualityBadge" />
+                            <span>Show video quality badge</span>
+                        </label>
+                    </div>
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox" type="checkbox" id="EnableAudioCodecBadge" />
+                            <span>Show audio codec badge</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="verticalSection">
+                    <h3 class="checkboxListLabel">Image types</h3>
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox" type="checkbox" id="ProcessPrimary" />
+                            <span>Primary (poster)</span>
+                        </label>
+                    </div>
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox" type="checkbox" id="ProcessThumb" />
+                            <span>Thumbnail</span>
+                        </label>
+                    </div>
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox" type="checkbox" id="ProcessBackdrop" />
+                            <span>Backdrop</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="selectContainer">
+                    <label class="selectLabel" for="Position">Badge position</label>
+                    <select is="emby-select" id="Position" class="emby-select-withcolor emby-select">
+                        <option value="TopLeft">Top left</option>
+                        <option value="TopRight">Top right</option>
+                        <option value="BottomLeft">Bottom left</option>
+                        <option value="BottomRight">Bottom right</option>
+                    </select>
+                </div>
+
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="BadgeScale">Badge size (scale)</label>
+                    <input is="emby-input" type="number" id="BadgeScale" step="0.05" min="0.3" max="3" />
+                    <div class="fieldDescription">Relative to image size. 1.0 is the default.</div>
+                </div>
+
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="Margin">Margin (px)</label>
+                    <input is="emby-input" type="number" id="Margin" step="1" min="0" max="200" />
+                </div>
+
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="BackgroundOpacity">Background opacity</label>
+                    <input is="emby-input" type="number" id="BackgroundOpacity" step="0.05" min="0" max="1" />
+                    <div class="fieldDescription">0 is fully transparent, 1 is fully opaque.</div>
+                </div>
+
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="BackgroundColor">Background color</label>
+                    <input is="emby-input" type="color" id="BackgroundColor" />
+                </div>
+
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="TextColor">Text color</label>
+                    <input is="emby-input" type="color" id="TextColor" />
+                </div>
+
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="VideoAccentColor">Video accent color</label>
+                    <input is="emby-input" type="color" id="VideoAccentColor" />
+                </div>
+
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="AudioAccentColor">Audio accent color</label>
+                    <input is="emby-input" type="color" id="AudioAccentColor" />
+                </div>
+
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="CacheExpirationHours">Cache expiration (hours)</label>
+                    <input is="emby-input" type="number" id="CacheExpirationHours" step="1" min="0" max="8760" />
+                    <div class="fieldDescription">Set to 0 to keep processed images until the source image changes.</div>
+                </div>
+
+                <div>
+                    <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+                        <span>Save</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        (function () {
+            var pluginId = 'a3f5c9d2-7b14-4e8a-9c6f-2d8b1e0a4f73';
+
+            function toHexColor(value) {
+                if (!value) {
+                    return '#000000';
+                }
+                return value.charAt(0) === '#' ? value : '#' + value;
+            }
+
+            document.querySelector('#QualityOverlayConfigPage').addEventListener('viewshow', function () {
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+                    document.querySelector('#EnableVideoQualityBadge').checked = config.EnableVideoQualityBadge;
+                    document.querySelector('#EnableAudioCodecBadge').checked = config.EnableAudioCodecBadge;
+                    document.querySelector('#ProcessPrimary').checked = config.ProcessPrimary;
+                    document.querySelector('#ProcessThumb').checked = config.ProcessThumb;
+                    document.querySelector('#ProcessBackdrop').checked = config.ProcessBackdrop;
+                    document.querySelector('#Position').value = config.Position;
+                    document.querySelector('#BadgeScale').value = config.BadgeScale;
+                    document.querySelector('#Margin').value = config.Margin;
+                    document.querySelector('#BackgroundOpacity').value = config.BackgroundOpacity;
+                    document.querySelector('#BackgroundColor').value = toHexColor(config.BackgroundColor);
+                    document.querySelector('#TextColor').value = toHexColor(config.TextColor);
+                    document.querySelector('#VideoAccentColor').value = toHexColor(config.VideoAccentColor);
+                    document.querySelector('#AudioAccentColor').value = toHexColor(config.AudioAccentColor);
+                    document.querySelector('#CacheExpirationHours').value = config.CacheExpirationHours;
+                    Dashboard.hideLoadingMsg();
+                });
+            });
+
+            document.querySelector('#QualityOverlayConfigForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+                    config.EnableVideoQualityBadge = document.querySelector('#EnableVideoQualityBadge').checked;
+                    config.EnableAudioCodecBadge = document.querySelector('#EnableAudioCodecBadge').checked;
+                    config.ProcessPrimary = document.querySelector('#ProcessPrimary').checked;
+                    config.ProcessThumb = document.querySelector('#ProcessThumb').checked;
+                    config.ProcessBackdrop = document.querySelector('#ProcessBackdrop').checked;
+                    config.Position = document.querySelector('#Position').value;
+                    config.BadgeScale = parseFloat(document.querySelector('#BadgeScale').value);
+                    config.Margin = parseInt(document.querySelector('#Margin').value, 10);
+                    config.BackgroundOpacity = parseFloat(document.querySelector('#BackgroundOpacity').value);
+                    config.BackgroundColor = document.querySelector('#BackgroundColor').value;
+                    config.TextColor = document.querySelector('#TextColor').value;
+                    config.VideoAccentColor = document.querySelector('#VideoAccentColor').value;
+                    config.AudioAccentColor = document.querySelector('#AudioAccentColor').value;
+                    config.CacheExpirationHours = parseInt(document.querySelector('#CacheExpirationHours').value, 10);
+
+                    ApiClient.updatePluginConfiguration(pluginId, config).then(function (result) {
+                        Dashboard.processPluginConfigurationUpdateResult(result);
+                    });
+                });
+                return false;
+            });
+        })();
+    </script>
+</div>
+</body>
+</html>

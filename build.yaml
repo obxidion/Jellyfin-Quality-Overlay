@@ -1,0 +1,15 @@
+name: "Quality Overlay"
+guid: "a3f5c9d2-7b14-4e8a-9c6f-2d8b1e0a4f73"
+version: "1.0.0.0"
+targetAbi: "10.11.0.0"
+framework: "net9.0"
+owner: "yourname"
+overview: "Overlay video quality and audio codec badges on images."
+description: >
+  Draws clean video quality (4K, 1080p, 720p, 480p, SD) and audio codec
+  (DTS-HD MA 7.1, TrueHD Atmos, DD+ 5.1, AAC 5.1, FLAC, ...) badges onto
+  poster, thumbnail, and backdrop images in memory without modifying the
+  original files. Fully configurable from the admin dashboard.
+category: "Metadata"
+artifacts:
+  - "Jellyfin.Plugin.QualityOverlay.dll"
