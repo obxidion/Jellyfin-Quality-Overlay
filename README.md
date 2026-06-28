@@ -54,9 +54,6 @@ jprm plugin build .
 
 ## Install via the Jellyfin plugin repository (GitHub)
 
-Once you have published a release on GitHub (see "Publishing releases" below),
-users can install and auto-update the plugin from a repository URL:
-
 1. In Jellyfin go to **Dashboard → Plugins → Repositories → Add**.
 2. Set the URL to the hosted manifest:
    `https://raw.githubusercontent.com/obxidion/Jellyfin-Quality-Overlay/main/manifest.json`
