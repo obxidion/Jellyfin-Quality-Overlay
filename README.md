@@ -10,7 +10,7 @@ are served — original image files are never modified.
 
 ## Configuration
 
-# Plugin Quick Install Method
+### Plugin Quick Install Method
 `https://raw.githubusercontent.com/obxidion/Jellyfin-Quality-Overlay/main/manifest.json`
 
 Open **Dashboard → Plugins → Quality Overlay** to configure:
