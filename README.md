@@ -8,10 +8,10 @@ are served — original image files are never modified.
 - Audio codec: best/main audio stream with channels, e.g. `DTS-HD MA 7.1`,
   `TrueHD Atmos`, `DD+ 5.1`, `AAC 5.1`, `DTS 5.1`, `FLAC 2.0`
 
-## Configuration
-
 ## Plugin Quick Install Method
 `https://raw.githubusercontent.com/obxidion/Jellyfin-Quality-Overlay/main/manifest.json`
+
+## Configuration
 
 Open **Dashboard → Plugins → Quality Overlay** to configure:
 
