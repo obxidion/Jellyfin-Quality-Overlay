@@ -1,5 +1,6 @@
 # Quality Overlay
 [![Listed on JellyWatch Hub](https://jellywatch.app/hub/quality-overlay/badge.svg)](https://jellywatch.app/hub/quality-overlay)
+
 A Jellyfin plugin that overlays clean video quality and audio codec badges onto
 poster, thumbnail, and backdrop images. Badges are drawn in memory while images
 are served, original image files are never modified.
