@@ -11,5 +11,6 @@ description: >
   poster, thumbnail, and backdrop images in memory without modifying the
   original files. Fully configurable from the admin dashboard.
 category: "Metadata"
+changelog: "See the GitHub releases page for details."
 artifacts:
   - "Jellyfin.Plugin.QualityOverlay.dll"
