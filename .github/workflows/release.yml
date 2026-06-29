@@ -49,9 +49,10 @@ jobs:
           [ -f manifest.json ] || echo '[]' > manifest.json
           ZIP="$(ls artifacts/*.zip)"
           jprm repo add --url "$URL_BASE" ./ "$ZIP"
-          rm -f ./*.zip
+          rm -rf ./*.zip ./quality-overlay
+          URL_BASE="$URL_BASE" \
           IMAGE_URL="https://raw.githubusercontent.com/${{ github.repository }}/$DEFAULT_BRANCH/logo.png" \
-            node -e "const fs=require('fs');const m=JSON.parse(fs.readFileSync('manifest.json','utf8'));for(const p of m){if(fs.existsSync('logo.png'))p.imageUrl=process.env.IMAGE_URL;}fs.writeFileSync('manifest.json',JSON.stringify(m,null,4)+'\n');"
+            node -e "const fs=require('fs');const m=JSON.parse(fs.readFileSync('manifest.json','utf8'));for(const p of m){for(const v of (p.versions||[])){if(v.sourceUrl)v.sourceUrl=process.env.URL_BASE+'/'+v.sourceUrl.split('/').pop();}if(fs.existsSync('logo.png'))p.imageUrl=process.env.IMAGE_URL;}fs.writeFileSync('manifest.json',JSON.stringify(m,null,4)+'\n');"
 
       - name: Commit manifest
         run: |
