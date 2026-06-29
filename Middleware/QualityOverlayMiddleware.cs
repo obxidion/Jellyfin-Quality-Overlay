@@ -81,10 +81,22 @@ public partial class QualityOverlayMiddleware
         var queryString = context.Request.QueryString.HasValue ? context.Request.QueryString.Value : null;
         var cacheKey = _cache.BuildKey(request.ItemId, request.ImageType, request.ImageIndex, queryString, versionTicks, labels, config);
 
+        var etag = $"\"qo-{cacheKey[..32]}\"";
+
+        // The ETag encodes the item version, badge labels, and every visual
+        // setting, so it changes whenever colors/scale/etc. change. If the browser
+        // already holds this exact version, let it keep using its cached copy.
+        if (context.Request.Headers.IfNoneMatch.ToString().Contains(etag, StringComparison.Ordinal))
+        {
+            context.Response.StatusCode = StatusCodes.Status304NotModified;
+            SetCacheHeaders(context, etag);
+            return;
+        }
+
         var cached = _cache.Get(cacheKey, config);
         if (cached is not null)
         {
-            await WriteImageAsync(context, cached.Value.Bytes, cached.Value.ContentType).ConfigureAwait(false);
+            await WriteImageAsync(context, cached.Value.Bytes, cached.Value.ContentType, etag).ConfigureAwait(false);
             return;
         }
 
@@ -140,6 +152,7 @@ public partial class QualityOverlayMiddleware
 
         context.Response.ContentType = contentType;
         context.Response.ContentLength = processed.Length;
+        SetCacheHeaders(context, etag);
         await originalBody.WriteAsync(processed).ConfigureAwait(false);
     }
 
@@ -153,12 +166,20 @@ public partial class QualityOverlayMiddleware
         }
     }
 
-    private static async Task WriteImageAsync(HttpContext context, byte[] bytes, string contentType)
+    private static async Task WriteImageAsync(HttpContext context, byte[] bytes, string contentType, string etag)
     {
         context.Response.StatusCode = StatusCodes.Status200OK;
         context.Response.ContentType = contentType;
         context.Response.ContentLength = bytes.Length;
+        SetCacheHeaders(context, etag);
         await context.Response.Body.WriteAsync(bytes).ConfigureAwait(false);
+    }
+
+    private static void SetCacheHeaders(HttpContext context, string etag)
+    {
+        context.Response.Headers.ETag = etag;
+        context.Response.Headers.CacheControl = "no-cache";
+        context.Response.Headers.Remove(HeaderNames.LastModified);
     }
 
     private static bool ShouldProcess(PluginConfiguration config, string imageType)
