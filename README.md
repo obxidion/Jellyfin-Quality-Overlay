@@ -2,7 +2,7 @@
 
 A Jellyfin plugin that overlays clean video quality and audio codec badges onto
 poster, thumbnail, and backdrop images. Badges are drawn in memory while images
-are served — original image files are never modified.
+are served, original image files are never modified.
 
 - Video quality: 4K, 1440p, 1080p, 720p, 480p, SD (from the highest quality video stream)
 - Audio codec: best/main audio stream with channels, e.g. `DTS-HD MA 7.1`,
