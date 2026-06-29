@@ -83,9 +83,6 @@ public partial class QualityOverlayMiddleware
 
         var etag = $"\"qo-{cacheKey[..32]}\"";
 
-        // The ETag encodes the item version, badge labels, and every visual
-        // setting, so it changes whenever colors/scale/etc. change. If the browser
-        // already holds this exact version, let it keep using its cached copy.
         if (context.Request.Headers.IfNoneMatch.ToString().Contains(etag, StringComparison.Ordinal))
         {
             context.Response.StatusCode = StatusCodes.Status304NotModified;
@@ -100,9 +97,7 @@ public partial class QualityOverlayMiddleware
             return;
         }
 
-        // Force a full 200 response from the image endpoint so we always have
-        // bytes to overlay. Without this, a browser-cached original would trigger
-        // a 304 (no body) and the un-overlaid cached image would be shown.
+
         context.Request.Headers.Remove(HeaderNames.IfNoneMatch);
         context.Request.Headers.Remove(HeaderNames.IfModifiedSince);
         context.Request.Headers.Remove(HeaderNames.IfRange);
