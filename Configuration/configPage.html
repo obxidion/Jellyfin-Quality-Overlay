@@ -6,7 +6,7 @@
 </head>
 <body>
 <div id="QualityOverlayConfigPage" data-role="page" class="page type-interior pluginConfigurationPage"
-     data-controller="__plugin/QualityOverlayConfigPage.js">
+     data-require="emby-input,emby-button,emby-checkbox,emby-select">
     <div data-role="content">
         <div class="content-primary">
             <form id="QualityOverlayConfigForm">
@@ -117,18 +117,18 @@
 
     <script type="text/javascript">
         (function () {
-            var pluginId = 'a3f5c9d2-7b14-4e8a-9c6f-2d8b1e0a4f73';
+            var QualityOverlayConfig = { pluginUniqueId: 'a3f5c9d2-7b14-4e8a-9c6f-2d8b1e0a4f73' };
 
-            function toHexColor(value) {
+            function toHexColor(value, fallback) {
                 if (!value) {
-                    return '#000000';
+                    return fallback;
                 }
                 return value.charAt(0) === '#' ? value : '#' + value;
             }
 
-            document.querySelector('#QualityOverlayConfigPage').addEventListener('viewshow', function () {
+            document.querySelector('#QualityOverlayConfigPage').addEventListener('pageshow', function () {
                 Dashboard.showLoadingMsg();
-                ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+                ApiClient.getPluginConfiguration(QualityOverlayConfig.pluginUniqueId).then(function (config) {
                     document.querySelector('#EnableVideoQualityBadge').checked = config.EnableVideoQualityBadge;
                     document.querySelector('#EnableAudioCodecBadge').checked = config.EnableAudioCodecBadge;
                     document.querySelector('#ProcessPrimary').checked = config.ProcessPrimary;
@@ -138,11 +138,14 @@
                     document.querySelector('#BadgeScale').value = config.BadgeScale;
                     document.querySelector('#Margin').value = config.Margin;
                     document.querySelector('#BackgroundOpacity').value = config.BackgroundOpacity;
-                    document.querySelector('#BackgroundColor').value = toHexColor(config.BackgroundColor);
-                    document.querySelector('#TextColor').value = toHexColor(config.TextColor);
-                    document.querySelector('#VideoAccentColor').value = toHexColor(config.VideoAccentColor);
-                    document.querySelector('#AudioAccentColor').value = toHexColor(config.AudioAccentColor);
+                    document.querySelector('#BackgroundColor').value = toHexColor(config.BackgroundColor, '#101010');
+                    document.querySelector('#TextColor').value = toHexColor(config.TextColor, '#ffffff');
+                    document.querySelector('#VideoAccentColor').value = toHexColor(config.VideoAccentColor, '#3fa7ff');
+                    document.querySelector('#AudioAccentColor').value = toHexColor(config.AudioAccentColor, '#f2b705');
                     document.querySelector('#CacheExpirationHours').value = config.CacheExpirationHours;
+                }).catch(function () {
+                    Dashboard.alert('Unable to load Quality Overlay settings.');
+                }).finally(function () {
                     Dashboard.hideLoadingMsg();
                 });
             });
@@ -150,7 +153,7 @@
             document.querySelector('#QualityOverlayConfigForm').addEventListener('submit', function (e) {
                 e.preventDefault();
                 Dashboard.showLoadingMsg();
-                ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+                ApiClient.getPluginConfiguration(QualityOverlayConfig.pluginUniqueId).then(function (config) {
                     config.EnableVideoQualityBadge = document.querySelector('#EnableVideoQualityBadge').checked;
                     config.EnableAudioCodecBadge = document.querySelector('#EnableAudioCodecBadge').checked;
                     config.ProcessPrimary = document.querySelector('#ProcessPrimary').checked;
@@ -166,9 +169,12 @@
                     config.AudioAccentColor = document.querySelector('#AudioAccentColor').value;
                     config.CacheExpirationHours = parseInt(document.querySelector('#CacheExpirationHours').value, 10);
 
-                    ApiClient.updatePluginConfiguration(pluginId, config).then(function (result) {
+                    return ApiClient.updatePluginConfiguration(QualityOverlayConfig.pluginUniqueId, config).then(function (result) {
                         Dashboard.processPluginConfigurationUpdateResult(result);
                     });
+                }).catch(function () {
+                    Dashboard.hideLoadingMsg();
+                    Dashboard.alert('Unable to save Quality Overlay settings.');
                 });
                 return false;
             });

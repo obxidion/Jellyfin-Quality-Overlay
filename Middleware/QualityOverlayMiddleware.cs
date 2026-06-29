@@ -6,6 +6,7 @@ using Jellyfin.Plugin.QualityOverlay.Drawing;
 using MediaBrowser.Controller.Library;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 
 namespace Jellyfin.Plugin.QualityOverlay.Middleware;
 
@@ -86,6 +87,14 @@ public partial class QualityOverlayMiddleware
             await WriteImageAsync(context, cached.Value.Bytes, cached.Value.ContentType).ConfigureAwait(false);
             return;
         }
+
+        // Force a full 200 response from the image endpoint so we always have
+        // bytes to overlay. Without this, a browser-cached original would trigger
+        // a 304 (no body) and the un-overlaid cached image would be shown.
+        context.Request.Headers.Remove(HeaderNames.IfNoneMatch);
+        context.Request.Headers.Remove(HeaderNames.IfModifiedSince);
+        context.Request.Headers.Remove(HeaderNames.IfRange);
+        context.Request.Headers.Remove(HeaderNames.Range);
 
         var originalBody = context.Response.Body;
         await using var buffer = new MemoryStream();
